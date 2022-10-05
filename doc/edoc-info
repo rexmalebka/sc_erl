@@ -1,3 +1,0 @@
-%% encoding: UTF-8
-{application,sc}.
-{modules,[sc,sc_app,sc_sup]}.
