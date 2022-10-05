@@ -10,6 +10,10 @@
 	 , noid_synth/2
 	 , get_synth/3, set_synth/3
 	 , remove_synth/2
+	 
+	 , add_buffer/5, add_buffer/3
+	 , remove_buffer/2
+
 	]).
 
 
@@ -54,7 +58,8 @@ remove_synthdef(OSC, SynthdefName) when is_pid(OSC) and is_list(SynthdefName) ->
 
 
 
-
+%--------------------------------------------------------------------
+%--------------------------------------------------------------------
 
 
 %--------------------------------------------------------------------
@@ -196,6 +201,49 @@ noid_synth(OSC,SynthId)  when is_pid(OSC) and is_integer(SynthId) and (SynthId >
 	osc_client:cast_msg(OSC, "/s_noid", [{i,SynthId}]).
 
 
+%%--------------------------------------------------------------------
+%% @doc
+%% set control value for a synth
+%% @end
+%%--------------------------------------------------------------------
+
+
+-spec set_synth(OSC::pid()
+	       , SynthId::non_neg_integer()
+	       , ControlMap:: #{ atom()|integer() => float()|integer()}
+	       ) -> ok.
+
+set_synth(OSC, SynthId, ControlMap) ->
+	set_node(OSC, SynthId, ControlMap).
+
+
+%%--------------------------------------------------------------------
+%% @doc
+%% removes a synth
+%% @end
+%%--------------------------------------------------------------------
+
+-spec remove_synth(OSC::pid()
+		   , SynthId::non_neg_integer()
+		  ) -> ok.
+
+remove_synth(OSC, SynthId) -> remove_node(OSC, SynthId).
+
+
+
+
+%--------------------------------------------------------------------
+%--------------------------------------------------------------------
+
+
+
+
+%%--------------------------------------------------------------------
+%% @doc
+%% sets value for a control of a node
+%% @end
+%%--------------------------------------------------------------------
+
 
 -spec set_node(OSC::pid()
 	       , NodeId::non_neg_integer()
@@ -219,6 +267,11 @@ set_node(OSC, NodeId, ControlMap) when is_pid(OSC) and
 
 	osc_client:cast_msg(OSC, "/n_set", [NodeId | Args ]).
 
+%%--------------------------------------------------------------------
+%% @doc
+%% remove a node
+%% @end
+%%--------------------------------------------------------------------
 
 -spec remove_node(OSC::pid()
 		   , NodeId::non_neg_integer()
@@ -229,32 +282,81 @@ remove_node(OSC, NodeId) when is_pid(OSC) and
 	osc_client:cast_msg(OSC, "/n_free", [NodeId]).
 
 
--spec set_synth(OSC::pid()
-	       , SynthId::non_neg_integer()
-	       , ControlMap:: #{ atom()|integer() => float()|integer()}
-	       ) -> ok.
-
-set_synth(OSC, SynthId, ControlMap) ->
-	set_node(OSC, SynthId, ControlMap).
 
 
--spec remove_synth(OSC::pid()
-		   , SynthId::non_neg_integer()
-		  ) -> ok.
-
-remove_synth(OSC, SynthId) -> remove_node(OSC, SynthId).
+%--------------------------------------------------------------------
+%--------------------------------------------------------------------
 
 
 
+%%--------------------------------------------------------------------
+%% @doc
+%% add a buffer
+%% @end
+%%--------------------------------------------------------------------
 
 
+-spec add_buffer(OSC::pid()
+		 , Path:: list()
+		 , BufferId::non_neg_integer()
+		 , StartFrame::non_neg_integer()
+		 , TotalFrames::non_neg_integer()
+		  ) -> ok | {error, not_found}.
+
+add_buffer(OSC, Path, BufferId, StartFrame , TotalFrames )  when 
+	  is_pid(OSC) and 
+	  is_list(Path) and
+	  is_integer(BufferId) and
+	  is_integer(StartFrame) and (StartFrame >= 0) and
+	  is_integer(TotalFrames)  
+	  -> 
+	case osc_client:call_msg(OSC, "/b_allocRead", [BufferId, {s,Path}, StartFrame, TotalFrames]) of
+		{error, timeout} -> {error, timeout};
+		{message, "/done", _} -> ok;
+		{message, "/fail",_} -> {error, not_found}
+	end.
+					 
+
+%%--------------------------------------------------------------------
+%% @doc
+%% add a buffer
+%% @end
+%%--------------------------------------------------------------------
 
 
+-spec add_buffer(OSC::pid()
+		 , Path:: list()
+		 , BufferId::non_neg_integer()
+		  ) -> ok | {error, not_found}.
+
+add_buffer(OSC, Path, BufferId )  when 
+	  is_pid(OSC) and 
+	  is_list(Path) and
+	  is_integer(BufferId) and (BufferId > 0) 
+	  -> 
+	add_buffer(OSC, Path, BufferId, 0, -1).
 
 
+%%--------------------------------------------------------------------
+%% @doc
+%% removes a buffer
+%% @end
+%%--------------------------------------------------------------------
 
 
+-spec remove_buffer(OSC::pid()
+		 , BufferId::non_neg_integer()
+		  ) -> ok | {error, not_found}.
 
+remove_buffer(OSC, BufferId )  when 
+	  is_pid(OSC) and 
+	  is_integer(BufferId) and (BufferId > 0) 
+	  -> 
+	case osc_client:call_msg(OSC, "/b_free",[BufferId]) of
+		{error, timeout} -> {error, timeout};
+		{message, "/done", _} -> ok;
+		{message, "/fail",_} -> {error, not_found}
+	end.
 
 
 
