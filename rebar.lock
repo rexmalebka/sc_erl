@@ -1,0 +1,4 @@
+[{<<"osc">>,
+  {git,"https://github.com/erlsci/osc",
+       {ref,"5b696142aa635567dbe6cff63f9e7323ffc2cd60"}},
+  0}].

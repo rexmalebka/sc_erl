@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module sc</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module sc</h1>
+<ul class="index"><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+
+
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-addAction">addAction()</a></h3>
+<p><tt>addAction() = 0..4 | head | tail | before | 'after' | replace</tt></p>
+
+
+<h3 class="typedecl"><a name="type-addActionTuple">addActionTuple()</a></h3>
+<p><tt>addActionTuple() = {<a href="#type-addAction">addAction()</a>, integer()}</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_synth-2">add_synth/2</a></td><td>
+  add a synth, by default the synth will be added to tail of group 1, random id and no control arguments.</td></tr>
+<tr><td valign="top"><a href="#add_synth-3">add_synth/3</a></td><td>
+  add a synth, the synth will be added to tail of group 1 with no control arguments.</td></tr>
+<tr><td valign="top"><a href="#add_synth-4">add_synth/4</a></td><td>
+  add a synth, the synth will be added to tail of group 1.</td></tr>
+<tr><td valign="top"><a href="#add_synth-5">add_synth/5</a></td><td>
+  add a synth specifying synthid, and actions.</td></tr>
+<tr><td valign="top"><a href="#add_synthdef-2">add_synthdef/2</a></td><td>
+  add a synthdef, could be bytes form, directory path or file path.</td></tr>
+<tr><td valign="top"><a href="#get_synth-3">get_synth/3</a></td><td>
+  get synth control value, in case the control does not exists will receivie a 0.0.</td></tr>
+<tr><td valign="top"><a href="#noid_synth-2">noid_synth/2</a></td><td>
+  noid a synth, the synth could no longer be communicated.</td></tr>
+<tr><td valign="top"><a href="#remove_synth-2">remove_synth/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#remove_synthdef-2">remove_synthdef/2</a></td><td>
+  remove a synthdef.</td></tr>
+<tr><td valign="top"><a href="#set_synth-3">set_synth/3</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="add_synth-2">add_synth/2</a></h3>
+<div class="spec">
+<p><tt>add_synth(OSC::pid(), SynthdefName::list()) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>
+  add a synth, by default the synth will be added to tail of group 1, random id and no control arguments.</p>
+
+<h3 class="function"><a name="add_synth-3">add_synth/3</a></h3>
+<div class="spec">
+<p><tt>add_synth(OSC::pid(), SynthdefName::list(), SynthId::integer()) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>
+  add a synth, the synth will be added to tail of group 1 with no control arguments.</p>
+
+<h3 class="function"><a name="add_synth-4">add_synth/4</a></h3>
+<div class="spec">
+<p><tt>add_synth(OSC::pid(), SynthdefName::list(), SynthId::integer(), SynthArgs::map()) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>
+  add a synth, the synth will be added to tail of group 1</p>
+
+<h3 class="function"><a name="add_synth-5">add_synth/5</a></h3>
+<div class="spec">
+<p><tt>add_synth(OSC::pid(), SynthdefName::list(), SynthId::integer(), SynthArgs::map(), AddActionTuple::<a href="#type-addActionTuple">addActionTuple()</a>) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>
+  add a synth specifying synthid, and actions</p>
+
+<h3 class="function"><a name="add_synthdef-2">add_synthdef/2</a></h3>
+<div class="spec">
+<p><tt>add_synthdef(OSC::pid(), Synthdef::iodata() | list()) -&gt; ok | {error, timeout}</tt><br></p>
+<p> </p>
+</div><p>
+  add a synthdef, could be bytes form, directory path or file path.</p>
+
+<h3 class="function"><a name="get_synth-3">get_synth/3</a></h3>
+<div class="spec">
+<p><tt>get_synth(OSC::pid(), SynthId::non_neg_integer(), ControlName::integer() | string()) -&gt; {ok, float()} | {error, timeout} | {error, notfound}</tt><br></p>
+<p> </p>
+</div><p>
+  get synth control value, in case the control does not exists will receivie a 0.0.</p>
+
+<h3 class="function"><a name="noid_synth-2">noid_synth/2</a></h3>
+<div class="spec">
+<p><tt>noid_synth(OSC::pid(), SynthId::non_neg_integer()) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>
+  noid a synth, the synth could no longer be communicated</p>
+
+<h3 class="function"><a name="remove_synth-2">remove_synth/2</a></h3>
+<div class="spec">
+<p><tt>remove_synth(OSC::pid(), SynthId::non_neg_integer()) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="remove_synthdef-2">remove_synthdef/2</a></h3>
+<div class="spec">
+<p><tt>remove_synthdef(OSC::pid(), Synthdef::list()) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>
+  remove a synthdef</p>
+
+<h3 class="function"><a name="set_synth-3">set_synth/3</a></h3>
+<div class="spec">
+<p><tt>set_synth(OSC::pid(), SynthId::non_neg_integer(), ControlMap::#{atom() | integer() =&gt; float() | integer()}) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>
