@@ -36,4 +36,4 @@ sc:add_buffer(SC, "priv/sound.wav", 0).
 sc:remove_buffer(SC, "priv/sound.wav", 0).
 ```
 
-for further referencces please check the wiki
+for further referencces please check the [wiki](https://github.com/rexmalebka/sc_erl/wiki)
