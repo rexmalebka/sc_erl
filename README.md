@@ -28,6 +28,12 @@ sc:set_synth(SC, 1003, #{freq=> 200}).
 
 % remove synth
 sc:remove_synth(SC, 1003).
+
+% add a buffer
+sc:add_buffer(SC, "priv/sound.wav", 0).
+
+% remove a buffer
+sc:remove_buffer(SC, "priv/sound.wav", 0).
 ```
 
 for further referencces please check the wiki
