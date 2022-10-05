@@ -13,6 +13,7 @@
 	 
 	 , add_buffer/5, add_buffer/3
 	 , remove_buffer/2
+	 , get_buffer/2
 
 	]).
 
@@ -359,6 +360,31 @@ remove_buffer(OSC, BufferId )  when
 	end.
 
 
+%%--------------------------------------------------------------------
+%% @doc
+%% gets data from a buffer
+%% @end
+%%--------------------------------------------------------------------
+
+-type bufferOutput() :: {
+			 BufferNumber :: integer()
+			 , NumFrames::integer()
+			 , NumChannels::integer()
+			 , SampleRate::float()}.
+
+-spec get_buffer(OSC::pid()
+		 , BufferId::non_neg_integer()
+		  ) -> {ok, bufferOutput()} | {error, not_found}.
+
+get_buffer(OSC, BufferId )  when 
+	  is_pid(OSC) and 
+	  is_integer(BufferId) and (BufferId > 0) 
+	  -> 
+	case osc_client:call_msg(OSC, "/b_query",[BufferId]) of
+		{error, timeout} -> {error, timeout};
+		{message, "/b_info", BufferOutput} -> {ok, BufferOutput};
+		{message, "/fail",_} -> {error, not_found}
+	end.
 
 
 
