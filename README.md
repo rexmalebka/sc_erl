@@ -9,6 +9,24 @@ Build
 -----
     $ rebar3 compile
 
+
+Installation
+-----
+
+Just inject the dependency into your deps 
+ 
+```erlang
+{deps, [
+	{sc,
+	 {
+	  git, "https://github.com/rexmalebka/sc_erl",{
+		 branch, "main"
+		}
+	 }
+	}
+       ]}.
+```
+
 Usage
 -----
 
