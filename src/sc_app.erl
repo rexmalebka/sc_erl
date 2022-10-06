@@ -9,10 +9,10 @@
 
 -export([start/2, stop/1]).
 
-start(_StartType, _StartArgs) ->
-    sc_sup:start_link().
+start(_StartType, _StartArgs) ->ok.
+	
 
 stop(_State) ->
-    ok.
+	ok.
 
 %% internal functions
