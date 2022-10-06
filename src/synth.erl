@@ -219,7 +219,7 @@ noid_synth(SynthId)  ->
 	       ) -> ok.
 
 set(OSC, SynthId, ControlMap) ->
-	set_node(OSC, SynthId, ControlMap).
+	sc_node:set(OSC, SynthId, ControlMap).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -233,7 +233,7 @@ set(OSC, SynthId, ControlMap) ->
 
 set(SynthId, ControlMap) ->
 	OSC = find_sc_client(),
-	set_node(OSC, SynthId, ControlMap).
+	sc_node:set(OSC, SynthId, ControlMap).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -245,7 +245,7 @@ set(SynthId, ControlMap) ->
 		   , SynthId::non_neg_integer()
 		  ) -> ok.
 
-stop(OSC, SynthId) -> remove_node(OSC, SynthId).
+stop(OSC, SynthId) -> sc_node:remove(OSC, SynthId).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -257,46 +257,4 @@ stop(OSC, SynthId) -> remove_node(OSC, SynthId).
 
 stop(SynthId) ->
 	OSC = find_sc_client(),
-	remove_node(OSC, SynthId).
-
-%%--------------------------------------------------------------------
-%% @doc
-%% sets value for a control of a node
-%% @end
-%%--------------------------------------------------------------------
-
--spec set_node(OSC::pid()
-	       , NodeId::non_neg_integer()
-	       , ControlMap:: #{ atom()|integer() => float()|integer()}
-	       ) -> ok.
-
-set_node(OSC, NodeId, ControlMap) when is_pid(OSC) and
-			     is_integer(NodeId) and
-			     is_map(ControlMap) ->
-
-	Args_ = case maps:size(ControlMap) rem 2 of
-			0 -> maps:to_list(ControlMap);
-			1 -> [ {dummyfix, 0} | maps:to_list(ControlMap)]
-		end,
-
-	Args = lists:map(fun({Key, Value}) when is_number(Value) and is_atom(Key)->
-					 [{s,atom_to_list(Key)}, Value];
-			    ({Key, Value}) when is_number(Value) and is_integer(Key) ->
-					 [Key, Value]
-			 end,Args_),
-
-	osc_client:cast_msg(OSC, "/n_set", [NodeId | Args ]).
-
-%%--------------------------------------------------------------------
-%% @doc
-%% remove a node
-%% @end
-%%--------------------------------------------------------------------
-
--spec remove_node(OSC::pid()
-		   , NodeId::non_neg_integer()
-		  ) -> ok.
-
-remove_node(OSC, NodeId) when is_pid(OSC) and
-			     is_integer(NodeId) ->
-	osc_client:cast_msg(OSC, "/n_free", [NodeId]).
+	sc_node:remove(OSC, SynthId).
