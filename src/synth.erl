@@ -35,21 +35,18 @@ load(OSC, SynthdefName, SynthId, SynthArgs, {AddAction, TargetAction } ) when
 	is_integer(TargetAction) and
 	is_map(SynthArgs) -> 
 
-	Args_ = case maps:size(SynthArgs) rem 2 of
-			0 -> maps:to_list(SynthArgs);
-			1 -> [ {dummyfix, 0} | maps:to_list(SynthArgs)]
-		end,
-
-	Args = lists:map(fun({Key, Value}) when is_number(Value) and is_atom(Key)->
+	Args_ = lists:map(fun({Key, Value}) when is_number(Value) and is_atom(Key)->
 					 [{s,atom_to_list(Key)}, Value];
 			    ({Key, Value}) when is_number(Value) and is_integer(Key) ->
 					 [Key, Value]
-			 end,Args_),
+			 end, maps:to_list(SynthArgs) ),
+
+	Args = Args_ ++ [{b,<<>>}],
 
 	osc_client:cast_msg(
 	  OSC
 	  , "/s_new", [
-		       {s, SynthdefName}, SynthId, AddAction, TargetAction | lists:append(Args)]
+		       {s, SynthdefName}, SynthId, AddAction, TargetAction | Args]
 	 );
 
 load(OSC, SynthdefName, SynthId, SynthArgs, {head, TargetAction } ) ->
