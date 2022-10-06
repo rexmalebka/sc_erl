@@ -7,13 +7,6 @@
 	 , remove/2, remove/1	
 	]).
 
-find_sc_client() ->
-	{ok, _Pid} = osc_client:start(),
-	case osc_client:connect(localhost, 57110) of
-		{error, {already_started, Pid}} -> Pid;
-		{ok, Pid} -> Pid
-	end.
-
 -type addAction() :: 0..4 | head | tail | before | 'after' | replace.
 -type addActionTuple() :: { addAction(), integer() }.
 
@@ -26,13 +19,23 @@ add(OSC, GroupId, {AddAction, TargetAction}) when
 	  is_integer(TargetAction) ->
 	osc_client:cast_msg(
 	  OSC
-	  , "/g_new", [GroupId, AddAction, TargetAction]
-	 ).
+	  , "/g_new", [{i,GroupId}, {i,AddAction}, {i,TargetAction}, {b,<<>>}]
+	 );
+
+add(OSC, GroupId, {head, TargetAction}) ->  add(OSC, GroupId, {0, TargetAction});
+
+add(OSC, GroupId, {tail, TargetAction}) ->  add(OSC, GroupId, {1, TargetAction});
+
+add(OSC, GroupId, {before, TargetAction}) ->  add(OSC, GroupId, {2, TargetAction});
+
+add(OSC, GroupId, {'after', TargetAction}) ->  add(OSC, GroupId, {3, TargetAction});
+
+add(OSC, GroupId, {replace, TargetAction}) ->  add(OSC, GroupId, {4, TargetAction}).
 
 -spec add( GroupId::integer(), AddAction::addActionTuple()) -> ok.
 
 add(GroupId, {AddAction, TargetAction}) ->
-	  OSC = find_sc_client(),
+	  OSC = sc:get_client(),
 	  add(OSC, GroupId, {AddAction, TargetAction}).
 
 -spec remove(OSC::pid(), GroupId::integer()) -> ok.
@@ -43,5 +46,5 @@ remove(OSC, GroupId)->
 -spec remove(GroupId::integer()) -> ok.
 
 remove(GroupId)->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	sc_node:remove(OSC, GroupId).

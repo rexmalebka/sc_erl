@@ -7,14 +7,6 @@
 	 , remove/1, remove/2
 	]).
 
-find_sc_client()->
-	{ok, _Pid} = osc_client:start(),
-	case osc_client:connect(localhost, 57110) of
-		{error, {already_started, Pid}} -> Pid;
-		{ok, Pid} -> Pid
-	end.
-
-
 %--------------------------------------------------------------------
 %% @doc
 %% add a synthdef, could be bytes form, directory path or file path.
@@ -52,7 +44,7 @@ load(OSC, Synthdef) when is_pid(OSC) and is_binary(Synthdef)->
 -spec load(Synthdef::iodata()|list()) -> ok | {error, timeout}.
 
 load(SynthdefPath) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, SynthdefPath).
 
 
@@ -77,7 +69,7 @@ remove(OSC, SynthdefName) when is_pid(OSC) and is_list(SynthdefName) ->
 -spec remove(Synthdef::list()) -> ok.
 
 remove(SynthdefName) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	remove(OSC, SynthdefName).
 
 
