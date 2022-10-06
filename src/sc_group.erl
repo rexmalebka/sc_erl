@@ -19,8 +19,18 @@ add(OSC, GroupId, {AddAction, TargetAction}) when
 	  is_integer(TargetAction) ->
 	osc_client:cast_msg(
 	  OSC
-	  , "/g_new", [GroupId, AddAction, TargetAction]
-	 ).
+	  , "/g_new", [{i,GroupId}, {i,AddAction}, {i,TargetAction}, {b,<<>>}]
+	 );
+
+add(OSC, GroupId, {head, TargetAction}) ->  add(OSC, GroupId, {0, TargetAction});
+
+add(OSC, GroupId, {tail, TargetAction}) ->  add(OSC, GroupId, {1, TargetAction});
+
+add(OSC, GroupId, {before, TargetAction}) ->  add(OSC, GroupId, {2, TargetAction});
+
+add(OSC, GroupId, {'after', TargetAction}) ->  add(OSC, GroupId, {3, TargetAction});
+
+add(OSC, GroupId, {replace, TargetAction}) ->  add(OSC, GroupId, {4, TargetAction}).
 
 -spec add( GroupId::integer(), AddAction::addActionTuple()) -> ok.
 
