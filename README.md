@@ -36,22 +36,22 @@ Usage
 {ok, SC} = osc_client:connect(localhost, 57110).
 
 % load a synthdef from file
-sc:add_synthdef(SC, "priv/sequencer.scsyndef").
+synthdef:load(SC, "priv/sequencer.scsyndef").
 
 % create a synth
-sc:add_synth(SC, "sequencer", 1003).
+synth:load(SC, "sequencer", 1003).
 
 % set control of synth
-sc:set_synth(SC, 1003, #{freq=> 200}).
+synth:set(SC, 1003, #{freq=> 200}).
 
 % remove synth
-sc:remove_synth(SC, 1003).
+synth:remove(SC, 1003).
 
 % add a buffer
-sc:add_buffer(SC, "priv/sound.wav", 0).
+buffer:load(SC, "priv/sound.wav", 0).
 
 % remove a buffer
-sc:remove_buffer(SC, "priv/sound.wav", 0).
+buffer:remove(SC, "priv/sound.wav", 0).
 ```
 
 for further referencces please check the [wiki](https://github.com/rexmalebka/sc_erl/wiki)
