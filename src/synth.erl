@@ -7,15 +7,8 @@
 	 , noid_synth/2, noid_synth/1
 	 , get/3, get/2
 	 , set/3, set/2
-	 , stop/2, stop/1
+	 , remove/2, remove/1
 	]).
-
-find_sc_client()->
-	{ok, _Pid} = osc_client:start(),
-	case osc_client:connect(localhost, 57110) of
-		{error, {already_started, Pid}} -> Pid;
-		{ok, Pid} -> Pid
-	end.
 
 %--------------------------------------------------------------------
 %% @doc
@@ -93,7 +86,7 @@ load(OSC, SynthdefName, SynthId, SynthArgs) when
 	  is_map(SynthArgs) -> 
 	load(OSC, SynthdefName, SynthId, SynthArgs, {1,1});
 load(SynthdefName, SynthId, SynthArgs, ActionTuple) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, SynthdefName, SynthId, SynthArgs, ActionTuple).
 
 %%--------------------------------------------------------------------
@@ -112,7 +105,7 @@ load(OSC, SynthdefName, SynthId ) when
 	load(OSC, SynthdefName, SynthId,#{}, {1,1});
 
 load(SynthdefName, SynthId, SynthArgs ) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, SynthdefName, SynthId, SynthArgs, {1,1}).
 
 %%--------------------------------------------------------------------
@@ -131,7 +124,7 @@ load(OSC, SynthdefName) when
 	load(OSC, SynthdefName, -1, #{}, {1,1});
 
 load(SynthdefName, SynthId) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, SynthdefName, SynthId, #{}, {1,1}).
 
 %%--------------------------------------------------------------------
@@ -143,7 +136,7 @@ load(SynthdefName, SynthId) ->
 -spec load(SynthdefName::list())-> ok.
 
 load(SynthdefName) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, SynthdefName, -1, #{}, {1,1}).
 
 %%--------------------------------------------------------------------
@@ -179,7 +172,7 @@ get(OSC, SynthId, ControlName) when is_pid(OSC) and
 	       ) -> {ok, float()} | {error, timeout} | {error, notfound}.
 
 get(SynthId, ControlName) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	get(OSC, SynthId, ControlName).
 
 %%--------------------------------------------------------------------
@@ -204,7 +197,7 @@ noid_synth(OSC,SynthId)  when is_pid(OSC) and is_integer(SynthId) and (SynthId >
 -spec noid_synth(SynthId::non_neg_integer() ) -> ok.
 			
 noid_synth(SynthId)  ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	noid_synth(OSC, SynthId).
 
 %%--------------------------------------------------------------------
@@ -232,7 +225,7 @@ set(OSC, SynthId, ControlMap) ->
 	       ) -> ok.
 
 set(SynthId, ControlMap) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	sc_node:set(OSC, SynthId, ControlMap).
 
 %%--------------------------------------------------------------------
@@ -241,11 +234,11 @@ set(SynthId, ControlMap) ->
 %% @end
 %%--------------------------------------------------------------------
 
--spec stop(OSC::pid()
+-spec remove(OSC::pid()
 		   , SynthId::non_neg_integer()
 		  ) -> ok.
 
-stop(OSC, SynthId) -> sc_node:remove(OSC, SynthId).
+remove(OSC, SynthId) -> sc_node:remove(OSC, SynthId).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -253,8 +246,8 @@ stop(OSC, SynthId) -> sc_node:remove(OSC, SynthId).
 %% @end
 %%--------------------------------------------------------------------
 
--spec stop(SynthId::non_neg_integer() ) -> ok.
+-spec remove(SynthId::non_neg_integer() ) -> ok.
 
-stop(SynthId) ->
-	OSC = find_sc_client(),
+remove(SynthId) ->
+	OSC = sc:get_client(),
 	sc_node:remove(OSC, SynthId).

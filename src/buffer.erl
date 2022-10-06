@@ -4,17 +4,10 @@
 
 -export([
 	  load/5, load/4, load/3, load/2
-	 , remove_buffer/2
+	 , remove/2, remove/1
 	 , get/1, get/2
 
 	]).
-
-find_sc_client()->
-	{ok, _Pid} = osc_client:start(),
-	case osc_client:connect(localhost, 57110) of
-		{error, {already_started, Pid}} -> Pid;
-		{ok, Pid} -> Pid
-	end.
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -54,7 +47,7 @@ load(OSC, Path, BufferId, StartFrame , TotalFrames )  when
 	   , TotalFrames::non_neg_integer()) -> ok | {error, not_found}.
 
 load(Path, BufferId, StartFrame, TotalFrames) ->
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, Path, BufferId, StartFrame , TotalFrames).
 
 %%--------------------------------------------------------------------
@@ -84,7 +77,7 @@ load(OSC, Path, BufferId )  when
 -spec load(Path:: list(), BufferId::non_neg_integer() ) -> ok | {error, not_found}.
 
 load(Path, BufferId ) -> 
-	OSC = find_sc_client(),
+	OSC = sc:get_client(),
 	load(OSC, Path, BufferId, 0, -1).
 
 %%--------------------------------------------------------------------
@@ -93,11 +86,11 @@ load(Path, BufferId ) ->
 %% @end
 %%--------------------------------------------------------------------
 
--spec remove_buffer(OSC::pid()
+-spec remove(OSC::pid()
 		 , BufferId::non_neg_integer()
 		  ) -> ok | {error, not_found}.
 
-remove_buffer(OSC, BufferId )  when 
+remove(OSC, BufferId )  when 
 	  is_pid(OSC) and 
 	  is_integer(BufferId) and (BufferId > 0) 
 	  -> 
@@ -106,6 +99,17 @@ remove_buffer(OSC, BufferId )  when
 		{message, "/done", _} -> ok;
 		{message, "/fail",_} -> {error, not_found}
 	end.
+%%--------------------------------------------------------------------
+%% @doc
+%% removes a buffer
+%% @end
+%%--------------------------------------------------------------------
+
+-spec remove(BufferId::non_neg_integer() ) -> ok | {error, not_found}.
+
+remove(BufferId ) ->
+	OSC = sc:get_client(),
+	remove(OSC, BufferId).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -144,5 +148,5 @@ get(OSC, BufferId )  when
 get(BufferId )  when 
 	  is_integer(BufferId) and (BufferId > 0) 
 	  -> 
-	Pid = find_sc_client(),
+	Pid = sc:get_client(),
 	get(Pid, BufferId).
