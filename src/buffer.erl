@@ -173,7 +173,7 @@ alloc(BufferId, NumFrames, NumChannels) ->
 	     BufferId,
 	     NumFrames,
 	     NumChannels,
-	     {b, <<>>}
+	     {b,<<>>}
 	    ]),
 	ok.
 

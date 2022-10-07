@@ -34,6 +34,8 @@ load(OSC, SynthdefName, SynthId, SynthArgs, {AddAction, TargetAction } ) when
 	( ( AddAction >= 0 ) and ( AddAction =< 4) ) and
 	is_integer(TargetAction) and
 	is_map(SynthArgs) -> 
+	
+	io:format("miau ~w~n~n~n", [{SynthdefName, SynthId, SynthArgs, {AddAction, TargetAction}}]),
 
 	Args_ = lists:map(fun({Key, Value}) when is_number(Value) and is_atom(Key)->
 					 [{s,atom_to_list(Key)}, Value];
@@ -41,14 +43,13 @@ load(OSC, SynthdefName, SynthId, SynthArgs, {AddAction, TargetAction } ) when
 					 [Key, Value]
 			 end, maps:to_list(SynthArgs) ),
 
-	Args = lists:append(Args_) ++ [{b,<<>>}],
+	Args = lists:flatten(Args_),
 
-	io:format("miau:~w~n",[Args]),
+	io:format("miau:~w~n", [[SynthdefName, SynthId, AddAction, TargetAction | Args]]  ),
 
 	osc_client:cast_msg(
 	  OSC
-	  , "/s_new", [
-		       {s, SynthdefName}, SynthId, AddAction, TargetAction | Args]
+	  , "/s_new", [{s, SynthdefName}, SynthId, AddAction, TargetAction | Args]
 	 );
 
 load(OSC, SynthdefName, SynthId, SynthArgs, {head, TargetAction } ) ->
