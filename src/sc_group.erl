@@ -18,9 +18,9 @@ add(OSC, GroupId, {AddAction, TargetAction}) when
 	  is_integer(GroupId) and
 	  ( ( AddAction >= 0 ) and ( AddAction =< 4) ) and
 	  is_integer(TargetAction) ->
-	osc_client:cast_msg(
+	osc_client:call_msg(
 	  OSC
-	  , "/g_new", [{i,GroupId}, {i,AddAction}, {i,TargetAction}, {b,<<>>}]
+	  , "/g_new", [{i,GroupId}, {i,AddAction}, {i,TargetAction},{b,<<>>}]
 	 );
 
 add(OSC, GroupId, {head, TargetAction}) ->  add(OSC, GroupId, {0, TargetAction});
@@ -47,8 +47,7 @@ add(GroupId, {AddAction, TargetAction}) ->
 
 -spec get(GroupIp::integer() ) -> queryTree().
 
-get(GroupId) when is_integer(GroupId)->
-	OSC = sc:get_client(),
+get(OSC, GroupId) when is_integer(GroupId)->
 	case  osc_client:call_msg(
 	  OSC
 	  , "/g_queryTree",
@@ -57,6 +56,12 @@ get(GroupId) when is_integer(GroupId)->
 		{message, "/g_queryTree.reply", QueryTree} -> 
 		       parse_queryTree(QueryTree)
 	end.
+
+
+get(GroupId) ->
+	OSC = sc:get_client(),
+	get(OSC, GroupId).
+
 
 parse_queryTree([HasSynthControl, GroupId, NumChildNodes | ChildNodes ]) when 
 	  HasSynthControl == 1

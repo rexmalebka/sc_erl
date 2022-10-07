@@ -6,6 +6,7 @@
 	  load/5, load/4, load/3, load/2
 	 , remove/2, remove/1
 	 , get/1, get/2
+	 , alloc/3
 
 	]).
 
@@ -150,3 +151,29 @@ get(BufferId )  when
 	  -> 
 	Pid = sc:get_client(),
 	get(Pid, BufferId).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% alloca buffer
+%% @end
+%%--------------------------------------------------------------------
+
+-spec alloc(
+	BufferId::non_neg_integer()
+	, NumFrames::non_neg_integer()
+	, NumChannels::integer()
+       ) -> ok.
+
+alloc(BufferId, NumFrames, NumChannels) ->
+	OSC = sc:get_client(),
+	{message, "/done", _} = osc_client:call_msg(
+	  OSC
+	  , "/b_alloc"
+	  , [
+	     BufferId,
+	     NumFrames,
+	     NumChannels,
+	     {b, <<>>}
+	    ]),
+	ok.
+

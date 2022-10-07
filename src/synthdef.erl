@@ -32,7 +32,10 @@ load(OSC, SynthdefPath) when is_pid(OSC) and is_list(SynthdefPath) ->
 load(OSC, Synthdef) when is_pid(OSC) and is_binary(Synthdef)->
 	case osc_client:call_msg(OSC, "/d_recv", [{b,Synthdef}]) of
 		{error, timeout} -> {error,timeout};
-		{message, "/done", _ } -> ok
+		{message, "/done", _ } -> ok;
+		X -> 
+			io:format("wrror~w~n",[X]),
+			error
 	end.
 
 %--------------------------------------------------------------------

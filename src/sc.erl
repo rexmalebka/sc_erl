@@ -13,3 +13,16 @@ get_client()->
 		{error, {already_started, Pid}} -> Pid;
 		{ok, Pid} -> Pid
 	end.
+
+version()->
+	OSC = get_client(),
+	{
+	 message
+	 , "/verion.reply"
+	 , Version } = osc_client:call_msg(
+	  OSC,
+	  "/version"
+	 ),
+	Version.
+
+
