@@ -41,7 +41,9 @@ load(OSC, SynthdefName, SynthId, SynthArgs, {AddAction, TargetAction } ) when
 					 [Key, Value]
 			 end, maps:to_list(SynthArgs) ),
 
-	Args = Args_ ++ [{b,<<>>}],
+	Args = lists:append(Args_) ++ [{b,<<>>}],
+
+	io:format("miau:~w~n",[Args]),
 
 	osc_client:cast_msg(
 	  OSC
@@ -74,6 +76,11 @@ load(OSC, SynthdefName, SynthId, SynthArgs, {replace, TargetAction } ) ->
 		, SynthdefName::list()
 		, SynthId::integer()
 		, SynthArgs::map( )
+	       )-> ok;
+	  (SynthdefName::list()
+		, SynthId::integer()
+		, SynthArgs::map( )
+		, AddActionTuple::addActionTuple()
 	       )-> ok.
 
 load(OSC, SynthdefName, SynthId, SynthArgs) when
